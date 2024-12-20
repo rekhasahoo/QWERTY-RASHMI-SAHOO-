@@ -76,8 +76,8 @@
     <form id="signUpForm">
       <h1>Sign Up</h1>
       <label for="email">Email:</label>
-      <input type="text" id="email" placeholder="Enter your email" disabled />
-      <button type="button" id="recordEmail">Record Email</button>
+      <input type="text" id="email" placeholder="Enter username" disabled />
+      <button type="button" id="recordEmail">Record Username</button>
 
       <label for="password">Password:</label>
       <input
@@ -172,12 +172,13 @@
         .getElementById("signupButton")
         .addEventListener("click", function () {
           alert("Account created successfully!");
+          window.location.href = "/signin";
         });
 
       document
         .getElementById("goToSignIn")
         .addEventListener("click", function () {
-          window.location.href = "signin.html";
+          window.location.href = "/signin";
         });
     </script>
   </body>
