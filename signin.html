@@ -73,8 +73,8 @@
     <form id="signInForm">
       <h1>Sign In</h1>
       <label for="email">Email:</label>
-      <input type="text" id="email" placeholder="Enter your email" disabled />
-      <button type="button" id="recordEmail">Record Email</button>
+      <input type="text" id="email" placeholder="Enter username" disabled />
+      <button type="button" id="recordEmail">Record Username</button>
 
       <label for="password">Password:</label>
       <input
@@ -156,13 +156,13 @@
         .getElementById("signinButton")
         .addEventListener("click", function () {
           alert("Signed in successfully!");
-          window.location.href = "registration.html"; // Redirect to the registration page
+          window.location.href = "/registration"; // Redirect to the registration page
         });
 
       document
         .getElementById("goToSignUp")
         .addEventListener("click", function () {
-          window.location.href = "signup.html";
+          window.location.href = "/signup";
         });
     </script>
   </body>
