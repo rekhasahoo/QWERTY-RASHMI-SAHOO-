@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Education Form</title>
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        background-color: #e0f7f7;
+        color: #333;
+        margin: 0;
+        padding: 0;
+      }
+
+      h1 {
+        text-align: center;
+        margin-top: 30px;
+        color: #00796b;
+        font-size: 2.5em;
+      }
+
+      form {
+        background: #fff;
+        border-radius: 10px;
+        max-width: 600px;
+        margin: 30px auto;
+        padding: 40px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      label {
+        display: block;
+        margin-bottom: 10px;
+        font-size: 1.1em;
+        font-weight: bold;
+        color: #00796b;
+      }
+
+      input[type="text"],
+      textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        font-size: 1em;
+        color: #555;
+      }
+
+      input[type="text"]:disabled,
+      textarea:disabled {
+        background-color: #f4f4f4;
+        color: #aaa;
+      }
+
+      textarea {
+        resize: none;
+        height: 120px;
+      }
+
+      button {
+        display: inline-block;
+        background-color: #00796b;
+        color: #fff;
+        border: none;
+        padding: 12px 18px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1.1em;
+        transition: background-color 0.3s ease;
+        margin-top: 10px;
+      }
+
+      button:hover {
+        background-color: #004d40;
+      }
+
+      button:disabled {
+        background-color: #ddd;
+        cursor: not-allowed;
+      }
+
+      #status {
+        margin-top: 20px;
+        text-align: center;
+        color: #00796b;
+        font-weight: bold;
+      }
+
+      .form-section {
+        margin-bottom: 25px;
+      }
+
+      .form-section button {
+        width: 100%;
+        padding: 12px;
+        font-size: 1.1em;
+      }
+
+      .form-section input[type="text"],
+      .form-section textarea {
+        width: calc(100% - 24px);
+      }
+
+      .form-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .form-container button {
+        width: auto;
+        margin: 15px 0;
+      }
+
+      .form-container h1 {
+        margin-top: 40px;
+      }
+
+      /* Add media query for responsiveness */
+      @media (max-width: 600px) {
+        form {
+          width: 100%;
+          padding: 20px;
+        }
+
+        button {
+          padding: 10px 15px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="form-container">
+      <h1>Registration Form</h1>
+      <form id="audioForm">
+        <div class="form-section">
+          <label for="name">Name:</label>
+          <input type="text" id="name" placeholder="Enter your name" disabled />
+          <button type="button" id="recordName">Record Name</button>
+        </div>
+
+        <div class="form-section">
+          <label for="fatherName">Father's Name:</label>
+          <input
+            type="text"
+            id="fatherName"
+            placeholder="Enter your father's name"
+            disabled
+          />
+          <button type="button" id="recordFatherName">
+            Record Father's Name
+          </button>
+        </div>
+
+        <div class="form-section">
+          <label for="motherName">Mother's Name:</label>
+          <input
+            type="text"
+            id="motherName"
+            placeholder="Enter your mother's name"
+            disabled
+          />
+          <button type="button" id="recordMotherName">
+            Record Mother's Name
+          </button>
+        </div>
+
+        <div class="form-section">
+          <label for="birthDate">Birth Date:</label>
+          <input
+            type="text"
+            id="birthDate"
+            placeholder="Enter your birth date"
+            disabled
+          />
+          <button type="button" id="recordBirthDate">Record Birth Date</button>
+        </div>
+
+        <div class="form-section">
+          <label for="gender">Gender:</label>
+          <input
+            type="text"
+            id="gender"
+            placeholder="Enter your gender"
+            disabled
+          />
+          <button type="button" id="recordGender">Record Gender</button>
+        </div>
+
+        <div class="form-section">
+          <label for="address">Address:</label>
+          <textarea
+            id="address"
+            placeholder="Enter your address"
+            disabled
+          ></textarea>
+          <button type="button" id="recordAddress">Record Address</button>
+        </div>
+
+        <div class="form-section">
+          <label for="phone">Phone No.:</label>
+          <input
+            type="text"
+            id="phone"
+            placeholder="Enter your phone number"
+            disabled
+          />
+          <button type="button" id="recordPhone">Record Phone No.</button>
+        </div>
+        <button type="button" id="register">Register</button>
+      </form>
+
+      <div id="status"></div>
+    </div>
+
+    <script>
+      let recorder;
+
+      function startRecording(buttonId, fieldId) {
+        navigator.mediaDevices
+          .getUserMedia({ audio: true })
+          .then(function (stream) {
+            const mediaRecorder = new MediaRecorder(stream);
+            recorder = mediaRecorder;
+
+            recorder.ondataavailable = function (event) {
+              const audioBlob = event.data;
+
+              // Send the recorded audio to the server
+              const formData = new FormData();
+              formData.append("audio_file", audioBlob, `${fieldId}.webm`);
+
+              fetch("/upload", {
+                method: "POST",
+                body: formData,
+              })
+                .then((response) => response.json())
+                .then((data) => {
+                  document.getElementById("status").innerText = data.message;
+
+                  if (data.text) {
+                    // Populate the respective input field with transcribed text
+                    document.getElementById(fieldId).value = data.text;
+                  }
+                })
+                .catch((error) => {
+                  console.error("Error:", error);
+                  document.getElementById("status").innerText =
+                    "Upload failed.";
+                });
+            };
+
+            recorder.start();
+            document.getElementById(buttonId).innerText = "Stop Recording";
+          });
+      }
+
+      function stopRecording(buttonId, fieldId) {
+        recorder.stop();
+        document.getElementById(buttonId).innerText = `Record ${fieldId}`;
+      }
+
+      // Add event listeners for all buttons
+      const fields = [
+        "name",
+        "fatherName",
+        "motherName",
+        "birthDate",
+        "gender",
+        "address",
+        "phone",
+      ];
+      fields.forEach((fieldId) => {
+        const buttonId = `record${
+          fieldId.charAt(0).toUpperCase() + fieldId.slice(1)
+        }`;
+        document
+          .getElementById(buttonId)
+          .addEventListener("click", function () {
+            if (this.innerText.startsWith("Record")) {
+              startRecording(buttonId, fieldId);
+            } else {
+              stopRecording(buttonId, fieldId);
+            }
+          });
+      });
+      document.getElementById("register").addEventListener("click", () => {
+        alert("Registration successful!");
+      });
+    </script>
+  </body>
+</html>

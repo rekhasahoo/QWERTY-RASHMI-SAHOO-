@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign In</title>
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        background-color: #e0f7f7;
+        color: #333;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      form {
+        background: #fff;
+        border-radius: 10px;
+        max-width: 400px;
+        width: 100%;
+        padding: 40px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+      h1 {
+        font-size: 2em;
+        margin-bottom: 20px;
+        color: #00796b;
+      }
+      label {
+        /*font-size: 1.1em;
+        margin-bottom: 8px;
+
+        display: block;*/
+        font-size: 1.1em;
+        margin-bottom: 10px;
+        display: block;
+        text-align: left;
+        margin-left: 10px;
+        margin-top: 10px;
+        font-weight: bold;
+        color: #00796b;
+      }
+      input {
+        width: 100%;
+        padding: 12px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 1em;
+        box-sizing: border-box;
+      }
+      button {
+        background-color: #00796b;
+        color: #fff;
+        border: none;
+        padding: 12px 18px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1.1em;
+        width: 100%;
+        margin: 10px 0;
+      }
+      button:focus {
+        outline: none; /* Remove focus outline */
+      }
+    </style>
+  </head>
+  <body>
+    <form id="signInForm">
+      <h1>Sign In</h1>
+      <label for="email">Email:</label>
+      <input type="text" id="email" placeholder="Enter username" disabled />
+      <button type="button" id="recordEmail">Record Username</button>
+
+      <label for="password">Password:</label>
+      <input
+        type="text"
+        id="password"
+        placeholder="Enter your password"
+        disabled
+      />
+      <button type="button" id="recordPassword">Record Password</button>
+
+      <button type="button" id="signinButton">Sign Up</button>
+      <button type="button" id="goToSignUp">
+        Don't Have Account? Create One
+      </button>
+    </form>
+
+    <script>
+      let recorder;
+
+      function startRecording(buttonId, fieldId) {
+        navigator.mediaDevices
+          .getUserMedia({ audio: true })
+          .then(function (stream) {
+            const mediaRecorder = new MediaRecorder(stream);
+            recorder = mediaRecorder;
+
+            recorder.ondataavailable = function (event) {
+              const audioBlob = event.data;
+
+              const formData = new FormData();
+              formData.append("audio_file", audioBlob, `${fieldId}.webm`);
+
+              fetch("/upload", {
+                method: "POST",
+                body: formData,
+              })
+                .then((response) => response.json())
+                .then((data) => {
+                  document.getElementById("status").innerText = data.message;
+
+                  if (data.text) {
+                    document.getElementById(fieldId).value = data.text;
+                  }
+                })
+                .catch((error) => {
+                  console.error("Error:", error);
+                  document.getElementById("status").innerText =
+                    "Upload failed.";
+                });
+            };
+
+            recorder.start();
+            document.getElementById(buttonId).innerText = "Stop Recording";
+          });
+      }
+
+      function stopRecording(buttonId, fieldId) {
+        recorder.stop();
+        document.getElementById(buttonId).innerText = `Record ${fieldId}`;
+      }
+
+      const fields = ["email", "password"];
+      fields.forEach((fieldId) => {
+        const buttonId = `record${
+          fieldId.charAt(0).toUpperCase() + fieldId.slice(1)
+        }`;
+        document
+          .getElementById(buttonId)
+          .addEventListener("click", function () {
+            if (this.innerText.startsWith("Record")) {
+              startRecording(buttonId, fieldId);
+            } else {
+              stopRecording(buttonId, fieldId);
+            }
+          });
+      });
+
+      document
+        .getElementById("signinButton")
+        .addEventListener("click", function () {
+          alert("Signed in successfully!");
+          window.location.href = "/registration"; // Redirect to the registration page
+        });
+
+      document
+        .getElementById("goToSignUp")
+        .addEventListener("click", function () {
+          window.location.href = "/signup";
+        });
+    </script>
+  </body>
+</html>
