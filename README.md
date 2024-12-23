@@ -1,5 +1,3 @@
-Here’s an updated version of the README file based on the new project structure:
-
 ---
 
 # Voice-Assisted Form Filling Using Flask and Whisper AI
@@ -8,6 +6,10 @@ This project is a Voice-Assisted Form Filling Application that uses Flask as the
 
 ### Project Link (After Deployment)
 [https://form-filling-by-voice-beyond-qwerty-3.onrender.com](https://form-filling-by-voice-beyond-qwerty-3.onrender.com)
+
+**I AM ALSO SHARING MY PYTHON AND SQL CERTIFICATION FROM HACKERRANK**
+PYTHON CERTIFICATION LINK: https://www.hackerrank.com/certificates/3676acdc6f98
+SQL CERTIFICATION LINK: https://www.hackerrank.com/certificates/7dbce7a3ef68
 
 ---
 
