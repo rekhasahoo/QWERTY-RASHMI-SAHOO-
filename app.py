@@ -5,9 +5,30 @@ import whisper  # type: ignore
 app = Flask(__name__)
 
 # Load the Whisper model
-model = whisper.load_model("base")
+'''model = whisper.load_model("base")'''
+model = whisper.load_model("tiny")
 
 
+'''@app.route('/')
+def home():
+    """Redirects to the signup page."""
+    return redirect(url_for('serve_signup'))
+
+@app.route('/signup')
+def serve_signup():
+    """Serves the signup page."""
+    return send_from_directory('.', 'signup.html')
+
+@app.route('/signin')
+def serve_signin():
+    """Serves the signin page."""
+    return send_from_directory('.', 'signin.html')
+
+@app.route('/registration')
+def serve_registration():
+    """Serves the registration page."""
+    return send_from_directory('.', 'registration.html')
+'''    
 @app.route('/')
 def home():
     """Redirects to the signup page."""
@@ -72,5 +93,8 @@ def preprocess_email_transcription(transcription):
     transcription = transcription.replace(" ", "")  # Remove spaces for email formatting
     return transcription
 
+'''if __name__ == '__main__':
+    app.run(debug=True)'''
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port, debug=True)
